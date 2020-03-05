@@ -1,0 +1,9 @@
+language: csharp
+solution: "./RateLimit.sln"
+mono: none
+dotnet: 3.1
+install:
+  - dotnet restore RateLimit.sln
+script:
+  - dotnet build RateLimit.sln
+  - dotnet test RateLimitTests/RateLimitTests.csproj
