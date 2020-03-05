@@ -1,5 +1,9 @@
 version: '3.4'
 
+networks:
+  ratelimit-dev:
+    driver: bridge
+
 services:
   ratelimit:
     image: ${DOCKER_REGISTRY-}ratelimit
@@ -8,3 +12,5 @@ services:
       dockerfile: RateLimit/Dockerfile
     ports:
       - "8000:80"
+    networks:
+      - ratelimit-dev
