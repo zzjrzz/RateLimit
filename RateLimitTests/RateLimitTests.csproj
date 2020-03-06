@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RateLimit\RateLimit\RateLimit.csproj" />
+    <ProjectReference Include="..\RateLimit\RateLimit.csproj" />
   </ItemGroup>
 
 </Project>

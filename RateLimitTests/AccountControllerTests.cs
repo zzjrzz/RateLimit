@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
 using RateLimit;
 using Xunit;
@@ -14,15 +15,20 @@ namespace RateLimitTests
             _factory = factory;
         }
 
-        [Theory]
-        [InlineData("/api/account")]
-        public async Task Get_EndpointsReturnSuccessAndCorrectContentType(string url)
+        [Fact]
+        public async Task Get_Endpoint_Exceeding_Limit_Returns_Too_Many_Requests()
         {
             var client = _factory.CreateClient();
 
-            var response = await client.GetAsync(url);
+            for (var times = 0; times < 10; times++)
+            {
+                var response = await client.GetAsync("/api/account");
+                response.EnsureSuccessStatusCode();
+            }
 
-            response.EnsureSuccessStatusCode();
+            var lastResponse = await client.GetAsync("/api/account");
+            Assert.Equal(HttpStatusCode.TooManyRequests, lastResponse.StatusCode);
+
         }
     }
 }
