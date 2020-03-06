@@ -23,13 +23,13 @@ namespace RateLimit.Controllers
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public object Get()
         {
-            _cache.CreateEntry("throttle");
+            _cache.CreateEntry("requestCount");
 
-            var count = (int?)_cache.Get("throttle") ?? 0;
+            var count = (int?)_cache.Get("requestCount") ?? 0;
 
             count++;
 
-            _cache.Set("throttle", count);
+            _cache.Set("requestCount", count);
 
             _logger.LogDebug($"Request made to /api/account {count} times");
 

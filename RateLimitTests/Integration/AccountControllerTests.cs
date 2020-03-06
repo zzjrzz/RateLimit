@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using RateLimit;
 using Xunit;
 
-namespace RateLimitTests
+namespace RateLimitTests.Integration
 {
     public class AccountControllerTests: IClassFixture<WebApplicationFactory<Startup>>
     {
@@ -28,7 +28,6 @@ namespace RateLimitTests
 
             var lastResponse = await client.GetAsync("/api/account");
             Assert.Equal(HttpStatusCode.TooManyRequests, lastResponse.StatusCode);
-
         }
     }
 }
