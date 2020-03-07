@@ -37,7 +37,7 @@ namespace RateLimit.Controllers
 
             requestCounter.Count++;
 
-            _cache.Set("requestCount", requestCounter);
+            _cache.Set("requestCount", requestCounter, requestCounter.ExpiresOn);
 
             _logger.LogDebug($"Request made to /api/account {requestCounter.Count} times");
 

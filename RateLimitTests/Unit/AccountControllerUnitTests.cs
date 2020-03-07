@@ -38,7 +38,8 @@ namespace RateLimitTests.Unit
         {
             var rateLimitValues = new RateLimitOptions
             {
-                MaximumTries = 1
+                MaximumTries = 1,
+                Interval = TimeSpan.FromMinutes(1)
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
             var memoryCache = GetMemoryCache();
@@ -58,7 +59,7 @@ namespace RateLimitTests.Unit
             var rateLimitValues = new RateLimitOptions
             {
                 MaximumTries = 10,
-                Interval = TimeSpan.Zero
+                Interval = TimeSpan.FromMinutes(1)
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
             var memoryCache = GetMemoryCache();
