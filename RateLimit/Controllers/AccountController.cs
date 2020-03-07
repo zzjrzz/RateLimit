@@ -12,12 +12,12 @@ namespace RateLimit.Controllers
     public class AccountController : ControllerBase
     {
         private readonly ILogger<AccountController> _logger;
-        private readonly IOptionsMonitor<RateLimitOptions> _options;
+        private readonly Limiter _limiter;
 
-        public AccountController(ILogger<AccountController> logger, IOptionsMonitor<RateLimitOptions> options)
+        public AccountController(ILogger<AccountController> logger, Limiter limiter)
         {
             _logger = logger;
-            _options = options;
+            _limiter = limiter;
         }
 
         [HttpGet]
@@ -25,9 +25,8 @@ namespace RateLimit.Controllers
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public IStatusCodeActionResult Get()
         {
-            var limiter = new Limiter("requestCode", _options);
-            if (!limiter.ShouldLimitRequest()) return StatusCode(200);
-            
+            if (!_limiter.ShouldLimitRequest("requestCode")) return StatusCode(200);
+
             _logger.LogDebug($"Request to /api/account was limited");
             return StatusCode(429, "Too many requests");
         }

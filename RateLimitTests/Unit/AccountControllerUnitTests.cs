@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using RateLimit;
 using RateLimit.Controllers;
 using RateLimit.Options;
 using Xunit;
@@ -40,7 +41,8 @@ namespace RateLimitTests.Unit
                 Interval = TimeSpan.FromMinutes(1)
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
-            var controller = new AccountController(_loggerMock.Object, _rateLimitOptionsMock.Object);
+            var limiter = new Limiter( _rateLimitOptionsMock.Object);
+            var controller = new AccountController(_loggerMock.Object, limiter);
 
             var response = controller.Get();
 
@@ -56,7 +58,8 @@ namespace RateLimitTests.Unit
                 Interval = TimeSpan.FromMinutes(1)
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
-            var controller = new AccountController(_loggerMock.Object, _rateLimitOptionsMock.Object);
+            var limiter = new Limiter(_rateLimitOptionsMock.Object);
+            var controller = new AccountController(_loggerMock.Object, limiter);
 
             var response = controller.Get();
 

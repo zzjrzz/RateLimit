@@ -7,21 +7,19 @@ namespace RateLimit
 {
     public class Limiter
     {
-        private readonly string _key;
         private readonly IOptionsMonitor<RateLimitOptions> _rateLimitOptions;
 
         private static readonly ConcurrentDictionary<string, RequestCounter> RequestCache =
             new ConcurrentDictionary<string, RequestCounter>();
 
-        public Limiter(string key, IOptionsMonitor<RateLimitOptions> rateLimitOptions)
+        public Limiter(IOptionsMonitor<RateLimitOptions> rateLimitOptions)
         {
-            _key = key;
             _rateLimitOptions = rateLimitOptions;
         }
 
-        public bool ShouldLimitRequest()
+        public bool ShouldLimitRequest(string key)
         {
-            var requestCounter = RequestCache.ContainsKey(_key) ? RequestCache[_key] : null;
+            var requestCounter = RequestCache.ContainsKey(key) ? RequestCache[key] : null;
 
             if (requestCounter == null || requestCounter.ExpiresOn <= DateTime.Now)
             {
@@ -34,7 +32,7 @@ namespace RateLimit
 
             requestCounter.Count++;
 
-            RequestCache[_key] = requestCounter;
+            RequestCache[key] = requestCounter;
 
             return (requestCounter.Count > _rateLimitOptions.CurrentValue.MaximumTries);
         }

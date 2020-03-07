@@ -38,6 +38,8 @@ namespace RateLimit
                     .AddConsole()
                     .SetMinimumLevel(LogLevel.Information)
             );
+
+            services.AddSingleton<Limiter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
