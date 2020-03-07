@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using RateLimit.Options;
 
 namespace RateLimit
 {
@@ -21,6 +22,8 @@ namespace RateLimit
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
+
+            services.Configure<RateLimitOptions>(Configuration.GetSection("RateLimitOptions"));
 
             services.AddControllers();
 
