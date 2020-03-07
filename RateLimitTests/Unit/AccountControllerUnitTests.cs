@@ -1,11 +1,9 @@
 ﻿using System;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using RateLimit;
 using RateLimit.Controllers;
 using RateLimit.Options;
 using Xunit;
@@ -42,15 +40,11 @@ namespace RateLimitTests.Unit
                 Interval = TimeSpan.FromMinutes(1)
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
-            var memoryCache = GetMemoryCache();
-            var controller = new AccountController(_loggerMock.Object, memoryCache, _rateLimitOptionsMock.Object);
+            var controller = new AccountController(_loggerMock.Object, _rateLimitOptionsMock.Object);
 
             var response = controller.Get();
 
-            var finalRequestCounter = (RequestCounter) memoryCache.Get("requestCount");
-            Assert.IsType<OkObjectResult>(response);
             Assert.Equal(200, response.StatusCode);
-            Assert.Equal(1, finalRequestCounter.Count);
         }
 
         [Fact]
@@ -58,24 +52,15 @@ namespace RateLimitTests.Unit
         {
             var rateLimitValues = new RateLimitOptions
             {
-                MaximumTries = 10,
+                MaximumTries = 0,
                 Interval = TimeSpan.FromMinutes(1)
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
-            var memoryCache = GetMemoryCache();
-            memoryCache.Set("requestCount", new RequestCounter
-            {
-                Count = 100,
-                ExpiresOn = DateTime.Now.Add(rateLimitValues.Interval)
-            });
-            var controller = new AccountController(_loggerMock.Object, memoryCache, _rateLimitOptionsMock.Object);
+            var controller = new AccountController(_loggerMock.Object, _rateLimitOptionsMock.Object);
 
             var response = controller.Get();
 
-            var finalRequestCounter = (RequestCounter) memoryCache.Get("requestCount");
-            Assert.IsType<ObjectResult>(response);
             Assert.Equal(429, response.StatusCode);
-            Assert.Equal(101, finalRequestCounter.Count);
         }
     }
 }
