@@ -42,7 +42,7 @@ namespace RateLimitTests.Unit
             var memoryCache = GetMemoryCache();
             var controller = new AccountController(_loggerMock.Object, memoryCache, _rateLimitOptionsMock.Object);
 
-            var response = (ObjectResult) controller.Get();
+            var response = controller.Get();
 
             Assert.IsType<OkObjectResult>(response);
             Assert.Equal(200, response.StatusCode);
@@ -61,7 +61,7 @@ namespace RateLimitTests.Unit
             memoryCache.Set("requestCount", 100);
             var controller = new AccountController(_loggerMock.Object, memoryCache, _rateLimitOptionsMock.Object);
 
-            var response = (ObjectResult) controller.Get();
+            var response = controller.Get();
 
             Assert.IsType<ObjectResult>(response);
             Assert.Equal(429, response.StatusCode);

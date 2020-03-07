@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -15,7 +16,8 @@ namespace RateLimit.Controllers
         private readonly IOptionsMonitor<RateLimitOptions> _options;
         private readonly IMemoryCache _cache;
 
-        public AccountController(ILogger<AccountController> logger, IMemoryCache cache, IOptionsMonitor<RateLimitOptions> options)
+        public AccountController(ILogger<AccountController> logger, IMemoryCache cache,
+            IOptionsMonitor<RateLimitOptions> options)
         {
             _logger = logger;
             _cache = cache;
@@ -27,15 +29,19 @@ namespace RateLimit.Controllers
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public ObjectResult Get()
         {
-            var count = (int?)_cache.Get("requestCount") ?? 0;
+            var requestCounter = (RequestCounter) _cache.Get("requestCount") ?? new RequestCounter
+            {
+                Count = 0,
+                ExpiresOn = DateTime.Now.Add(_options.CurrentValue.Interval)
+            };
 
-            count++;
+            requestCounter.Count++;
 
-            _cache.Set("requestCount", count);
+            _cache.Set("requestCount", requestCounter);
 
-            _logger.LogDebug($"Request made to /api/account {count} times");
+            _logger.LogDebug($"Request made to /api/account {requestCounter.Count} times");
 
-            return count > _options.CurrentValue.MaximumTries ? StatusCode(429, "Too many requests") : Ok(count);
+            return requestCounter.Count > _options.CurrentValue.MaximumTries ? StatusCode(429, "Too many requests") : Ok(requestCounter);
         }
     }
 }
