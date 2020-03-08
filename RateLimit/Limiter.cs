@@ -19,6 +19,22 @@ namespace RateLimit
 
         public bool ShouldLimitRequest(string key)
         {
+            var requestCounter = GetOrCreateRequestCounter(key);
+
+            requestCounter.Count++;
+            RequestCache[key] = requestCounter;
+
+            return (requestCounter.Count > _rateLimitOptions.CurrentValue.MaximumTries);
+        }
+
+        public TimeSpan TryAgainTime(string key)
+        {
+            var requestCounter = GetOrCreateRequestCounter(key);
+            return (requestCounter.ExpiresOn - DateTime.Now);
+        }
+
+        public RequestCounter GetOrCreateRequestCounter(string key)
+        {
             var requestCounter = RequestCache.ContainsKey(key) ? RequestCache[key] : null;
 
             if (requestCounter == null || requestCounter.ExpiresOn <= DateTime.Now)
@@ -30,11 +46,7 @@ namespace RateLimit
                 };
             }
 
-            requestCounter.Count++;
-
-            RequestCache[key] = requestCounter;
-
-            return (requestCounter.Count > _rateLimitOptions.CurrentValue.MaximumTries);
+            return requestCounter;
         }
     }
 }
