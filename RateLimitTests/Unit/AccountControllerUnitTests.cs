@@ -38,10 +38,10 @@ namespace RateLimitTests.Unit
             var rateLimitValues = new RateLimitOptions
             {
                 MaximumTries = 1,
-                Interval = TimeSpan.FromMinutes(1)
+                Interval = TimeSpan.FromHours(1)
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
-            var limiter = new SimpleLimiter( _rateLimitOptionsMock.Object, GetMemoryCache());
+            var limiter = new SimpleLimiter(_rateLimitOptionsMock.Object, GetMemoryCache());
             var controller = new AccountController(_loggerMock.Object, limiter);
 
             var response = controller.Get();
@@ -54,8 +54,8 @@ namespace RateLimitTests.Unit
         {
             var rateLimitValues = new RateLimitOptions
             {
-                MaximumTries = 0,
-                Interval = TimeSpan.FromMinutes(1)
+                MaximumTries = 100,
+                Interval = TimeSpan.FromHours(1)
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
             var cache = GetMemoryCache();
@@ -63,8 +63,8 @@ namespace RateLimitTests.Unit
             {
                 Count = 100,
                 ExpiresOn = DateTime.MaxValue
-            });
-            var limiter = new SimpleLimiter(_rateLimitOptionsMock.Object, GetMemoryCache());
+            }, DateTime.MaxValue);
+            var limiter = new SimpleLimiter(_rateLimitOptionsMock.Object, cache);
             var controller = new AccountController(_loggerMock.Object, limiter);
 
             var response = controller.Get();

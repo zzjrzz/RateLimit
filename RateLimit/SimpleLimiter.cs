@@ -30,7 +30,7 @@ namespace RateLimit
         public void IncrementCount(string key, RequestCounter requestCounter)
         {
             requestCounter.Count++;
-            _cache.Set(key, requestCounter);
+            _cache.Set(key, requestCounter, requestCounter.ExpiresOn);
         }
 
         public TimeSpan TryAgainTime(string key)
@@ -41,17 +41,15 @@ namespace RateLimit
 
         public RequestCounter GetOrCreateRequestCounter(string key)
         {
-            var requestCounter = (RequestCounter) _cache.Get(key);
+            if (_cache.TryGetValue(key, out RequestCounter requestCounter) && requestCounter.ExpiresOn > DateTime.Now)
+                return requestCounter;
 
-            if (requestCounter == null || requestCounter.ExpiresOn <= DateTime.Now)
+            requestCounter = new RequestCounter
             {
-                requestCounter = new RequestCounter
-                {
-                    ExpiresOn = DateTime.Now.Add(_rateLimitOptions.CurrentValue.Interval),
-                    Count = 0
-                };
-            }
-
+                ExpiresOn = DateTime.Now.Add(_rateLimitOptions.CurrentValue.Interval),
+                Count = 0
+            };
+            _cache.Set(key, requestCounter, requestCounter.ExpiresOn);
             return requestCounter;
         }
     }

@@ -23,9 +23,9 @@ namespace RateLimit.Controllers
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public IStatusCodeActionResult Get()
         {
-            if (!_limiter.ShouldLimitRequest("requestCode")) return StatusCode(200);
+            if (!_limiter.ShouldLimitRequest("requestCounter")) return StatusCode(200);
 
-            _logger.LogDebug($"Request to /api/account was limited");
+            _logger.LogWarning($"Request to /api/account was limited");
             return StatusCode(429, $"Rate limit exceeded. Try again in {_limiter.TryAgainTime("requestCode").Seconds} seconds.");
         }
     }
