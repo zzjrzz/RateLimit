@@ -10,9 +10,9 @@ namespace RateLimit.Controllers
     public class AccountController : ControllerBase
     {
         private readonly ILogger<AccountController> _logger;
-        private readonly Limiter _limiter;
+        private readonly ILimitingStrategy _limiter;
 
-        public AccountController(ILogger<AccountController> logger, Limiter limiter)
+        public AccountController(ILogger<AccountController> logger, ILimitingStrategy limiter)
         {
             _logger = logger;
             _limiter = limiter;

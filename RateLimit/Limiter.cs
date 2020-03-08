@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using RateLimit.Options;
 
 namespace RateLimit
 {
-    public class Limiter
+    public class Limiter : ILimitingStrategy
     {
         private readonly IOptionsMonitor<RateLimitOptions> _rateLimitOptions;
+        private readonly IMemoryCache _cache;
 
-        private static readonly ConcurrentDictionary<string, RequestCounter> RequestCache =
-            new ConcurrentDictionary<string, RequestCounter>();
-
-        public Limiter(IOptionsMonitor<RateLimitOptions> rateLimitOptions)
+        public Limiter(IOptionsMonitor<RateLimitOptions> rateLimitOptions,
+            IMemoryCache cache)
         {
             _rateLimitOptions = rateLimitOptions;
+            _cache = cache;
         }
 
         public bool ShouldLimitRequest(string key)
@@ -22,7 +22,7 @@ namespace RateLimit
             var requestCounter = GetOrCreateRequestCounter(key);
 
             requestCounter.Count++;
-            RequestCache[key] = requestCounter;
+            _cache.Set(key, requestCounter);
 
             return (requestCounter.Count > _rateLimitOptions.CurrentValue.MaximumTries);
         }
@@ -35,7 +35,7 @@ namespace RateLimit
 
         public RequestCounter GetOrCreateRequestCounter(string key)
         {
-            var requestCounter = RequestCache.ContainsKey(key) ? RequestCache[key] : null;
+            var requestCounter = (RequestCounter) _cache.Get(key);
 
             if (requestCounter == null || requestCounter.ExpiresOn <= DateTime.Now)
             {
