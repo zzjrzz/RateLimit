@@ -20,7 +20,7 @@ namespace RateLimitTests.Integration
         {
             var client = _factory.CreateClient();
 
-            for (var times = 1; times <= 10; times++)
+            for (var times = 1; times <= 100; times++)
             {
                 var response = await client.GetAsync("/api/account");
                 response.EnsureSuccessStatusCode();

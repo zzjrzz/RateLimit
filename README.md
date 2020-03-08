@@ -3,7 +3,7 @@
 ## Prerequisites
 1. [Docker](https://www.docker.com/)
 
-## Steps
+## Steps To Run
 1. `dotnet dev-certs https --trust`
 2. `docker-compose build`
 3. `docker-compose up`

@@ -41,7 +41,7 @@ namespace RateLimitTests.Unit
                 Interval = TimeSpan.FromMinutes(1)
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
-            var limiter = new Limiter( _rateLimitOptionsMock.Object, GetMemoryCache());
+            var limiter = new SimpleLimiter( _rateLimitOptionsMock.Object, GetMemoryCache());
             var controller = new AccountController(_loggerMock.Object, limiter);
 
             var response = controller.Get();
@@ -50,7 +50,7 @@ namespace RateLimitTests.Unit
         }
 
         [Fact]
-        public void Given_The_Counter_Is_More_Than_10_When_Get_Is_Called_Return_429_Response()
+        public void Given_The_Counter_Is_More_Than_100_When_Get_Is_Called_Return_429_Response()
         {
             var rateLimitValues = new RateLimitOptions
             {
@@ -61,10 +61,10 @@ namespace RateLimitTests.Unit
             var cache = GetMemoryCache();
             cache.Set("requestCounter", new RequestCounter
             {
-                Count = 10,
+                Count = 100,
                 ExpiresOn = DateTime.MaxValue
             });
-            var limiter = new Limiter(_rateLimitOptionsMock.Object, GetMemoryCache());
+            var limiter = new SimpleLimiter(_rateLimitOptionsMock.Object, GetMemoryCache());
             var controller = new AccountController(_loggerMock.Object, limiter);
 
             var response = controller.Get();

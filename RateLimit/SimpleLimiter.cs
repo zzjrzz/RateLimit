@@ -5,12 +5,13 @@ using RateLimit.Options;
 
 namespace RateLimit
 {
-    public class Limiter : ILimitingStrategy
+    public class SimpleLimiter : ILimitingStrategy
     {
         private readonly IOptionsMonitor<RateLimitOptions> _rateLimitOptions;
         private readonly IMemoryCache _cache;
 
-        public Limiter(IOptionsMonitor<RateLimitOptions> rateLimitOptions,
+        public SimpleLimiter(
+            IOptionsMonitor<RateLimitOptions> rateLimitOptions,
             IMemoryCache cache)
         {
             _rateLimitOptions = rateLimitOptions;
@@ -21,10 +22,15 @@ namespace RateLimit
         {
             var requestCounter = GetOrCreateRequestCounter(key);
 
-            requestCounter.Count++;
-            _cache.Set(key, requestCounter);
+            IncrementCount(key, requestCounter);
 
             return (requestCounter.Count > _rateLimitOptions.CurrentValue.MaximumTries);
+        }
+
+        public void IncrementCount(string key, RequestCounter requestCounter)
+        {
+            requestCounter.Count++;
+            _cache.Set(key, requestCounter);
         }
 
         public TimeSpan TryAgainTime(string key)
