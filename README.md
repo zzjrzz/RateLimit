@@ -1,7 +1,10 @@
 # Rate Limit
+[![Build Status](https://travis-ci.com/zzjrzz/RateLimit.svg?branch=master)](https://travis-ci.com/zzjrzz/RateLimit)
 
 ## Prerequisites
 1. [Docker](https://www.docker.com/)
+2. xUnit
+3. .NET Core 3.1
 
 ## Steps To Run
 1. `dotnet dev-certs https --trust`
