@@ -26,7 +26,8 @@ namespace RateLimit.Controllers
             if (!_limiter.ShouldLimitRequest("requestCounter")) return StatusCode(200);
 
             _logger.LogWarning($"Request to /api/account was limited");
-            return StatusCode(429, $"Rate limit exceeded. Try again in {_limiter.TryAgainTime("requestCode").Seconds} seconds.");
+            return StatusCode(429,
+                $"Rate limit exceeded. Try again in {(int) _limiter.TryAgainTime("requestCounter").TotalSeconds} seconds.");
         }
     }
 }
