@@ -3,7 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using RateLimit.Options;
 
-namespace RateLimit
+namespace RateLimit.Models.Limiters
 {
     public class SimpleLimiter : ILimitingStrategy
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RateLimit
+namespace RateLimit.Models
 {
     public class RequestCounter
     {

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Logging;
+using RateLimit.Models;
 
 namespace RateLimit.Controllers
 {
@@ -23,6 +24,13 @@ namespace RateLimit.Controllers
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public IStatusCodeActionResult Get()
         {
+            var requestIdentifier = new RequestIdentifier
+            {
+                IpAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString(),
+                Path = Request.Method.ToLowerInvariant(),
+                HttpMethod = Request.Method.ToLowerInvariant()
+            };
+
             if (!_limiter.ShouldLimitRequest("requestCounter")) return StatusCode(200);
 
             _logger.LogWarning($"Request to /api/account was limited");

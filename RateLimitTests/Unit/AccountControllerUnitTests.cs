@@ -4,8 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using RateLimit;
 using RateLimit.Controllers;
+using RateLimit.Models;
+using RateLimit.Models.Limiters;
 using RateLimit.Options;
 using Xunit;
 
