@@ -24,4 +24,4 @@ where `MaximumTries` is an Integer and `Interval` is a Timestamp.
 ## Assumptions
 - In-memory cache will be available therefore no fallback option has been implemented. Ideally this can be swapped out for a database store.
 - Cache use is limited and should not exceed normal memory needs therefore no limiting on size is implemented.
-- Rate limiting is applied to all requests as evident in the constant key, client-specific limiting quotas are therefore not implemented. However, it should be simple to extended for User Session / Auth-based / IP address rate limiting.
+- Client-specific limiting quotas are implemented through IP address strategy. It should also be simple to extended for User Session / Auth-based rate limiting.
