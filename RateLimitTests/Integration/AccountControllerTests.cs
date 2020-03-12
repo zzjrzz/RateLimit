@@ -6,7 +6,7 @@ using Xunit;
 
 namespace RateLimitTests.Integration
 {
-    public class AccountControllerTests: IClassFixture<WebApplicationFactory<Startup>>
+    public class AccountControllerTests : IClassFixture<WebApplicationFactory<Startup>>
     {
         private readonly WebApplicationFactory<Startup> _factory;
 
@@ -16,7 +16,7 @@ namespace RateLimitTests.Integration
         }
 
         [Fact]
-        public async Task Get_Endpoint_Exceeding_Limit_Returns_Too_Many_Requests()
+        public async Task Get_Endpoint_Is_Ok_Until_Exceeding_Limit_Returns_Too_Many_Requests()
         {
             var client = _factory.CreateClient();
 

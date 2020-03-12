@@ -21,14 +21,12 @@ namespace RateLimit.Models.Limiters
         public bool ShouldLimitRequest(string key)
         {
             var requestCounter = GetOrCreateRequestCounter(key);
-
-            IncrementCount(key, requestCounter);
-
             return (requestCounter.Count > _rateLimitOptions.CurrentValue.MaximumTries);
         }
 
-        private void IncrementCount(string key, RequestCounter requestCounter)
+        public void IncrementCount(string key)
         {
+            var requestCounter = GetOrCreateRequestCounter(key);
             requestCounter.Count++;
             _cache.Set(key, requestCounter, requestCounter.ExpiresOn);
         }

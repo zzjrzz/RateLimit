@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Logging;
 using RateLimit.Models.KeyBuilder;
+using RateLimit.Models.Limiters;
 
 namespace RateLimit.Controllers
 {
@@ -26,6 +27,8 @@ namespace RateLimit.Controllers
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public IStatusCodeActionResult Get()
         {
+            _limiter.IncrementCount(_keyBuilderStrategy.Build());
+
             if (!_limiter.ShouldLimitRequest(_keyBuilderStrategy.Build())) return StatusCode(200);
 
             _logger.LogWarning($"Request to /api/account was limited");

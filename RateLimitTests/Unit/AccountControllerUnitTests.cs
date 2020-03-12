@@ -76,7 +76,6 @@ namespace RateLimitTests.Unit
                 ExpiresOn = DateTime.MaxValue
             }, DateTime.MaxValue);
             var limiter = new SimpleLimiter(_rateLimitOptionsMock.Object, cache);
-
             var controller = new AccountController(_loggerMock.Object, limiter, keyBuilder);
 
             var response = controller.Get();
@@ -85,7 +84,7 @@ namespace RateLimitTests.Unit
         }
 
         [Fact]
-        public void Given_Two_Different_Clients_The_Rate_Limiting_Is_Unique()
+        public void Given_Two_Different_Clients_The_Rate_Limiting_Is_Unique_And_Only_One_Exceeds()
         {
             var rateLimitOptions = new RateLimitOptions
             {
