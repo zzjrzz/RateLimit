@@ -27,7 +27,7 @@ namespace RateLimit.Models.Limiters
             return (requestCounter.Count > _rateLimitOptions.CurrentValue.MaximumTries);
         }
 
-        public void IncrementCount(string key, RequestCounter requestCounter)
+        private void IncrementCount(string key, RequestCounter requestCounter)
         {
             requestCounter.Count++;
             _cache.Set(key, requestCounter, requestCounter.ExpiresOn);
