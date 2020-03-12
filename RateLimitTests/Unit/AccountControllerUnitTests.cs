@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,9 +17,11 @@ namespace RateLimitTests.Unit
     {
         private readonly Mock<IOptionsMonitor<RateLimitOptions>> _rateLimitOptionsMock;
         private readonly Mock<ILogger<AccountController>> _loggerMock;
+        private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
 
         public AccountControllerUnitTests()
         {
+            _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
             _rateLimitOptionsMock = new Mock<IOptionsMonitor<RateLimitOptions>>();
             _loggerMock = new Mock<ILogger<AccountController>>();
         }
@@ -43,7 +46,10 @@ namespace RateLimitTests.Unit
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
             var limiter = new SimpleLimiter(_rateLimitOptionsMock.Object, GetMemoryCache());
-            var controller = new AccountController(_loggerMock.Object, limiter);
+            _httpContextAccessorMock.Setup(httpContextAccessor => httpContextAccessor.HttpContext)
+                .Returns(new DefaultHttpContext());
+            var keyBuilder = new KeyBuilder(_httpContextAccessorMock.Object);
+            var controller = new AccountController(_loggerMock.Object, limiter, keyBuilder);
 
             var response = controller.Get();
 
@@ -59,14 +65,18 @@ namespace RateLimitTests.Unit
                 Interval = TimeSpan.FromHours(1)
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
+            _httpContextAccessorMock.Setup(httpContextAccessor => httpContextAccessor.HttpContext)
+                .Returns(new DefaultHttpContext());
+            var keyBuilder = new KeyBuilder(_httpContextAccessorMock.Object);
             var cache = GetMemoryCache();
-            cache.Set("requestCounter", new RequestCounter
+            cache.Set(keyBuilder.Build(), new RequestCounter
             {
                 Count = 100,
                 ExpiresOn = DateTime.MaxValue
             }, DateTime.MaxValue);
             var limiter = new SimpleLimiter(_rateLimitOptionsMock.Object, cache);
-            var controller = new AccountController(_loggerMock.Object, limiter);
+
+            var controller = new AccountController(_loggerMock.Object, limiter, keyBuilder);
 
             var response = controller.Get();
 

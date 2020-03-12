@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using RateLimit.Models;
 using RateLimit.Models.Limiters;
 using RateLimit.Options;
 
@@ -26,6 +27,8 @@ namespace RateLimit
 
             services.Configure<RateLimitOptions>(Configuration.GetSection("RateLimitOptions"));
 
+            services.AddHttpContextAccessor();
+
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
@@ -41,6 +44,7 @@ namespace RateLimit
             );
 
             services.AddScoped<ILimitingStrategy, SimpleLimiter>();
+            services.AddScoped<IKeyBuilderStrategy, KeyBuilder>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

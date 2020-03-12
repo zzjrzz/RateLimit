@@ -12,11 +12,14 @@ namespace RateLimit.Controllers
     {
         private readonly ILogger<AccountController> _logger;
         private readonly ILimitingStrategy _limiter;
+        private readonly IKeyBuilderStrategy _keyBuilderStrategy;
 
-        public AccountController(ILogger<AccountController> logger, ILimitingStrategy limiter)
+        public AccountController(ILogger<AccountController> logger, ILimitingStrategy limiter,
+            IKeyBuilderStrategy keyBuilderStrategy)
         {
             _logger = logger;
             _limiter = limiter;
+            _keyBuilderStrategy = keyBuilderStrategy;
         }
 
         [HttpGet]
@@ -24,18 +27,11 @@ namespace RateLimit.Controllers
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public IStatusCodeActionResult Get()
         {
-            var requestIdentifier = new RequestIdentifier
-            {
-                IpAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString(),
-                Path = Request.Method.ToLowerInvariant(),
-                HttpMethod = Request.Method.ToLowerInvariant()
-            };
-
-            if (!_limiter.ShouldLimitRequest("requestCounter")) return StatusCode(200);
+            if (!_limiter.ShouldLimitRequest(_keyBuilderStrategy.Build())) return StatusCode(200);
 
             _logger.LogWarning($"Request to /api/account was limited");
             return StatusCode(429,
-                $"Rate limit exceeded. Try again in {(int) _limiter.TryAgainTime("requestCounter").TotalSeconds} seconds.");
+                $"Rate limit exceeded. Try again in {(int) _limiter.TryAgainTime(_keyBuilderStrategy.Build()).TotalSeconds} seconds.");
         }
     }
 }
