@@ -16,7 +16,7 @@ namespace RateLimit.Models
             var requestIdentifier = new RequestIdentifier
             {
                 IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Path = _httpContextAccessor.HttpContext.Request.Method.ToLowerInvariant(),
+                Path = _httpContextAccessor.HttpContext.Request.Path.ToString().ToLowerInvariant(),
                 HttpMethod = _httpContextAccessor.HttpContext.Request.Method.ToLowerInvariant()
             };
             return $"{requestIdentifier.IpAddress}_{requestIdentifier.Path}_{requestIdentifier.HttpMethod}";

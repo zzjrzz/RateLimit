@@ -14,8 +14,7 @@ namespace RateLimit.Controllers
         private readonly ILimitingStrategy _limiter;
         private readonly IKeyBuilderStrategy _keyBuilderStrategy;
 
-        public AccountController(ILogger<AccountController> logger, ILimitingStrategy limiter,
-            IKeyBuilderStrategy keyBuilderStrategy)
+        public AccountController(ILogger<AccountController> logger, ILimitingStrategy limiter, IKeyBuilderStrategy keyBuilderStrategy)
         {
             _logger = logger;
             _limiter = limiter;

@@ -24,6 +24,9 @@ namespace RateLimitTests.Unit
             _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
             _rateLimitOptionsMock = new Mock<IOptionsMonitor<RateLimitOptions>>();
             _loggerMock = new Mock<ILogger<AccountController>>();
+
+            _httpContextAccessorMock.Setup(httpContextAccessor => httpContextAccessor.HttpContext)
+                .Returns(new DefaultHttpContext());
         }
 
         public IMemoryCache GetMemoryCache()
@@ -46,8 +49,6 @@ namespace RateLimitTests.Unit
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
             var limiter = new SimpleLimiter(_rateLimitOptionsMock.Object, GetMemoryCache());
-            _httpContextAccessorMock.Setup(httpContextAccessor => httpContextAccessor.HttpContext)
-                .Returns(new DefaultHttpContext());
             var keyBuilder = new KeyBuilder(_httpContextAccessorMock.Object);
             var controller = new AccountController(_loggerMock.Object, limiter, keyBuilder);
 
@@ -65,8 +66,6 @@ namespace RateLimitTests.Unit
                 Interval = TimeSpan.FromHours(1)
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
-            _httpContextAccessorMock.Setup(httpContextAccessor => httpContextAccessor.HttpContext)
-                .Returns(new DefaultHttpContext());
             var keyBuilder = new KeyBuilder(_httpContextAccessorMock.Object);
             var cache = GetMemoryCache();
             cache.Set(keyBuilder.Build(), new RequestCounter
