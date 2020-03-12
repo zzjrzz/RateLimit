@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace RateLimit.Models
+namespace RateLimit.Models.KeyBuilder
 {
     public class IpKeyBuilder : IKeyBuilderStrategy
     {
@@ -23,8 +23,4 @@ namespace RateLimit.Models
         }
     }
 
-    public interface IKeyBuilderStrategy
-    {
-        string Build();
-    }
 }

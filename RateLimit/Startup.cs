@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using RateLimit.Models;
+using RateLimit.Models.KeyBuilder;
 using RateLimit.Models.Limiters;
 using RateLimit.Options;
 

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Logging;
-using RateLimit.Models;
+using RateLimit.Models.KeyBuilder;
 
 namespace RateLimit.Controllers
 {

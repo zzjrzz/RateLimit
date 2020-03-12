@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Net;
+using Microsoft.AspNetCore.Http;
 using Moq;
-using RateLimit.Models;
+using RateLimit.Models.KeyBuilder;
 using Xunit;
 
 namespace RateLimitTests.Unit
@@ -19,11 +20,13 @@ namespace RateLimitTests.Unit
         {
             var httpContext = new DefaultHttpContext();
             httpContext.Request.Method = "GET";
+            httpContext.Request.Path = "/api/account";
+            httpContext.Connection.RemoteIpAddress = IPAddress.Parse("1.1.1.1");
             _httpContextAccessorMock.Setup(httpContextAccessor => httpContextAccessor.HttpContext)
                 .Returns(httpContext);
 
             var keyBuilder = new IpKeyBuilder(_httpContextAccessorMock.Object);
-            Assert.Equal("__", keyBuilder.Build());
+            Assert.Equal("1.1.1.1_/api/account_get", keyBuilder.Build());
         }
     }
 }

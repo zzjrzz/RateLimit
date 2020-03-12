@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using RateLimit.Controllers;
 using RateLimit.Models;
+using RateLimit.Models.KeyBuilder;
 using RateLimit.Models.Limiters;
 using RateLimit.Options;
 using Xunit;
@@ -29,12 +30,11 @@ namespace RateLimitTests.Unit
                 .Returns(new DefaultHttpContext());
         }
 
-        public IMemoryCache GetMemoryCache()
+        private IMemoryCache GetMemoryCache()
         {
             var services = new ServiceCollection();
             services.AddMemoryCache();
             var serviceProvider = services.BuildServiceProvider();
-
             var memoryCache = serviceProvider.GetService<IMemoryCache>();
             return memoryCache;
         }
