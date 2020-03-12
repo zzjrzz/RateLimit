@@ -49,7 +49,7 @@ namespace RateLimitTests.Unit
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
             var limiter = new SimpleLimiter(_rateLimitOptionsMock.Object, GetMemoryCache());
-            var keyBuilder = new KeyBuilder(_httpContextAccessorMock.Object);
+            var keyBuilder = new IpKeyBuilder(_httpContextAccessorMock.Object);
             var controller = new AccountController(_loggerMock.Object, limiter, keyBuilder);
 
             var response = controller.Get();
@@ -66,7 +66,7 @@ namespace RateLimitTests.Unit
                 Interval = TimeSpan.FromHours(1)
             };
             _rateLimitOptionsMock.Setup(options => options.CurrentValue).Returns(rateLimitValues);
-            var keyBuilder = new KeyBuilder(_httpContextAccessorMock.Object);
+            var keyBuilder = new IpKeyBuilder(_httpContextAccessorMock.Object);
             var cache = GetMemoryCache();
             cache.Set(keyBuilder.Build(), new RequestCounter
             {

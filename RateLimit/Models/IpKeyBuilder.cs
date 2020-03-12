@@ -2,11 +2,11 @@
 
 namespace RateLimit.Models
 {
-    public class KeyBuilder : IKeyBuilderStrategy
+    public class IpKeyBuilder : IKeyBuilderStrategy
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public KeyBuilder(IHttpContextAccessor httpContextAccessor)
+        public IpKeyBuilder(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
