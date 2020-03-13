@@ -13,7 +13,7 @@ namespace RateLimit.Controllers
         [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
         public IStatusCodeActionResult Get()
         {
-            return Ok();
+            return Ok("hello you are not rate limited");
         }
     }
 }

@@ -10,7 +10,8 @@
 1. `dotnet dev-certs https --trust`
 2. `docker-compose build`
 3. `docker-compose up`
-4. Navigate to Swagger (http://localhost:8000/swagger/index.html)
+4. Navigate to rate limited API call (http://localhost:8000/api/account)
+5. Navigate to Swagger (http://localhost:8000/swagger/index.html)
 
 ## Configuration
 To change the settings on the maximum requests per interval, go to `appsettings.json` and change the values,
