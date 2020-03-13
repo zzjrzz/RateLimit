@@ -25,3 +25,4 @@ where `MaximumTries` is an Integer and `Interval` is a Timestamp.
 - In-memory cache will be available therefore no fallback option has been implemented. Ideally this can be swapped out for a database store.
 - Cache use is limited and should not exceed normal memory needs therefore no limiting on size is implemented.
 - Client-specific limiting quotas are implemented through IP address strategy. It should also be simple to extended for User Session / Auth-based rate limiting.
+- Mixing different limiting strategies and rules for different endpoints not implemented.
