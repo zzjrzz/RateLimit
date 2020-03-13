@@ -14,11 +14,12 @@
 
 ## Configuration
 To change the settings on the maximum requests per interval, go to `appsettings.json` and change the values,
-where `MaximumTries` is an Integer and `Interval` is a Timestamp.
+where `MaximumTries` is an Integer, `Interval` is a Timestamp `Endpoints` is an array of string routes for endpoints to rate limit.
 ```
 "RateLimitOptions": {
     "MaximumTries": 100,
-    "Interval": "01:00:00"
+    "Interval": "01:00:00",
+    "Endpoints": ["/api/account"]
 },
 ```
 ## Assumptions
