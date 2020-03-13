@@ -37,7 +37,7 @@ namespace RateLimit.Models.Limiters
             return (requestCounter.ExpiresOn - DateTime.Now);
         }
 
-        public RequestCounter GetOrCreateRequestCounter(string key)
+        private RequestCounter GetOrCreateRequestCounter(string key)
         {
             if (_cache.TryGetValue(key, out RequestCounter requestCounter) && requestCounter.ExpiresOn > DateTime.Now)
                 return requestCounter;

@@ -7,26 +7,23 @@ namespace RateLimit.Models.KeyBuilder
 {
     public class IpKeyBuilder : IKeyBuilderStrategy
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public IpKeyBuilder(IHttpContextAccessor httpContextAccessor)
+        public IpKeyBuilder()
         {
-            _httpContextAccessor = httpContextAccessor;
         }
 
-        public RequestIdentifier CreateRequestIdentifier()
+        public RequestIdentifier CreateRequestIdentifier(HttpContext httpContext)
         {
             return new RequestIdentifier
             {
-                IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Path = _httpContextAccessor.HttpContext.Request.Path.ToString().ToLowerInvariant(),
-                HttpMethod = _httpContextAccessor.HttpContext.Request.Method.ToLowerInvariant()
+                IpAddress = httpContext.Connection.RemoteIpAddress?.ToString(),
+                Path = httpContext.Request.Path.ToString().ToLowerInvariant(),
+                HttpMethod = httpContext.Request.Method.ToLowerInvariant()
             };
         }
 
-        public string Build()
+        public string Build(HttpContext httpContext)
         {
-            var bytes = Encoding.UTF8.GetBytes(CreateRequestIdentifier().ToString());
+            var bytes = Encoding.UTF8.GetBytes(CreateRequestIdentifier(httpContext).ToString());
             using var algorithm = new SHA1Managed();
             var hash = algorithm.ComputeHash(bytes);
 

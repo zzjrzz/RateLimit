@@ -28,8 +28,8 @@ namespace RateLimitTests.Unit
             _httpContextAccessorMock.Setup(httpContextAccessor => httpContextAccessor.HttpContext)
                 .Returns(httpContext);
 
-            var keyBuilder = new IpKeyBuilder(_httpContextAccessorMock.Object);
-            Assert.Equal("1.1.1.1_/api/account_get", keyBuilder.CreateRequestIdentifier().ToString());
+            var keyBuilder = new IpKeyBuilder();
+            Assert.Equal("1.1.1.1_/api/account_get", keyBuilder.CreateRequestIdentifier(httpContext).ToString());
         }
 
         [Fact]
@@ -42,12 +42,12 @@ namespace RateLimitTests.Unit
             _httpContextAccessorMock.Setup(httpContextAccessor => httpContextAccessor.HttpContext)
                 .Returns(httpContext);
 
-            var keyBuilder = new IpKeyBuilder(_httpContextAccessorMock.Object);
-            var bytes = Encoding.UTF8.GetBytes(keyBuilder.CreateRequestIdentifier().ToString());
+            var keyBuilder = new IpKeyBuilder();
+            var bytes = Encoding.UTF8.GetBytes(keyBuilder.CreateRequestIdentifier(httpContext).ToString());
             using var algorithm = new SHA1Managed();
             var hash = algorithm.ComputeHash(bytes);
 
-            Assert.Equal(Convert.ToBase64String(hash), keyBuilder.Build());
+            Assert.Equal(Convert.ToBase64String(hash), keyBuilder.Build(httpContext));
         }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using RateLimit.Middleware;
 using RateLimit.Models.KeyBuilder;
 using RateLimit.Models.Limiters;
 using RateLimit.Options;
@@ -24,9 +25,10 @@ namespace RateLimit
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
-
             services.Configure<RateLimitOptions>(Configuration.GetSection("RateLimitOptions"));
-
+            services.AddScoped<ILimitingStrategy, SimpleLimiter>();
+            services.AddScoped<IKeyBuilderStrategy, IpKeyBuilder>();
+            services.AddTransient<RateLimitingMiddleware>();
             services.AddHttpContextAccessor();
 
             services.AddControllers();
@@ -42,9 +44,6 @@ namespace RateLimit
                     .AddConsole()
                     .SetMinimumLevel(LogLevel.Information)
             );
-
-            services.AddScoped<ILimitingStrategy, SimpleLimiter>();
-            services.AddScoped<IKeyBuilderStrategy, IpKeyBuilder>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +53,8 @@ namespace RateLimit
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseRateLimitingMiddleware();
 
             app.UseHttpsRedirection();
 
